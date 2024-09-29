@@ -1,0 +1,141 @@
+public class Main {
+  public static void main(String[] args) {
+    Horse horse = new Horse("Лошадь");
+    horse.eat();
+    horse.walk();
+
+    Tiger tiger = new Tiger("Тигр");
+    tiger.eat();
+
+    Dolphin dolphin = new Dolphin("Дельфин");
+    dolphin.eat();
+    dolphin.swim();
+
+    Eagle eagle = new Eagle("Орел");
+    eagle.eat();
+    eagle.fly();
+
+    Camel camel = new Camel("Верблюд");
+    camel.eat();
+    camel.walk();
+  }
+}
+
+public abstract class Animal {
+  protected String name;
+
+  public Animal(String name) {
+    this.name = name;
+  }
+
+  public abstract void eat();
+}
+
+public class Camel extends Herbivore implements Terrestrial {
+  public Camel(String name) {
+    super(name);
+  }
+
+  @Override
+  public void walk() {
+    System.out.println(name + " ходит");
+  }
+}
+
+public class Camel extends Herbivore implements Terrestrial {
+  public Camel(String name) {
+    super(name);
+  }
+
+  @Override
+  public void walk() {
+    System.out.println(name + " ходит");
+  }
+}
+
+public abstract class Herbivore extends Animal {
+
+  public Herbivore(String name) {
+    super(name);
+  }
+
+  @Override
+  public void eat() {
+    System.out.println(name + " ест траву");
+  }
+}
+
+public class Eagle extends Carnivore implements Flying {
+  public Eagle(String name) {
+    super(name);
+  }
+
+  @Override
+  public void eat() {
+    System.out.println(name + " ест мясо");
+  }
+
+  @Override
+  public void fly() {
+    System.out.println(name + " летит");
+  }
+}
+
+public class Dolphin extends Carnivore implements Swimming {
+  public Dolphin(String name) {
+    super(name);
+  }
+
+  @Override
+  public void eat() {
+    System.out.println(name + " ест рыбу");
+  }
+
+  @Override
+  public void swim() {
+    System.out.println(name + " плывет");
+  }
+}
+
+public class Tiger extends Carnivore {
+  public Tiger(String name) {
+    super(name);
+  }
+
+  @Override
+  public void eat() {
+    System.out.println(name + " ест говядину");
+  }
+}
+
+public interface Flying {
+  void fly();
+}
+
+public interface Swimming {
+  void swim();
+}
+
+имя: Java CI с Maven
+
+вкл:
+  толкать:
+    ветки: [ "главная" ]
+  pull_request:
+    ветки: [ "главная" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn package
