@@ -2,9 +2,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "Ulyalike-patch-4", "hmw6" ]
+    branches: [ "master", "hmw6" ]
   pull_request:
-    branches: [ "Ulyalike-patch-4" ]
+    branches: [ "master" ]
 
 jobs:
   build:
