@@ -9,12 +9,11 @@ import repository.exceptions.ArticleNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryArticleRepository implements ArticleRepository {
-  private final AtomicLong nextId = new AtomicLong(0); 
+  private final AtomicLong nextId = new AtomicLong(0);
   private final Map<ArticleId, Article> articleMap = new ConcurrentHashMap<>();
 
   @Override
@@ -28,8 +27,12 @@ public class InMemoryArticleRepository implements ArticleRepository {
   }
 
   @Override
-  public Optional<Article> findById(ArticleId articleId) {
-    return Optional.ofNullable(this.articleMap.get(articleId));
+  public Article findById(ArticleId articleId) throws ArticleNotFoundException {
+    Article article = this.articleMap.get(articleId);
+    if (article == null) {
+      throw new ArticleNotFoundException("Cannot find article by id=" + articleId.id());
+    }
+    return article;
   }
 
   @Override
@@ -51,10 +54,10 @@ public class InMemoryArticleRepository implements ArticleRepository {
 
   @Override
   public void addComment(ArticleId articleId, Comment comment) throws ArticleNotFoundException {
-    Article articleToAdd = articleMap.get(articleId);
-    if (articleToAdd == null) {
+    if (articleMap.get(articleId) == null) {
       throw new ArticleNotFoundException("Cannot find article by id=" + articleId.id());
     }
+    Article articleToAdd = articleMap.get(articleId);
     List<Comment> articleComments = articleToAdd.comments();
     articleComments.add(comment);
     articleMap.put(articleId, articleToAdd.withComments(articleComments));
@@ -62,10 +65,10 @@ public class InMemoryArticleRepository implements ArticleRepository {
 
   @Override
   public void deleteComment(ArticleId articleId, Comment comment) throws ArticleNotFoundException {
-    Article articleToAdd = articleMap.get(articleId);
-    if (articleToAdd == null) {
+    if (articleMap.get(articleId) == null) {
       throw new ArticleNotFoundException("Cannot find article by id=" + articleId.id());
     }
+    Article articleToAdd = articleMap.get(articleId);
     List<Comment> articleComments = articleToAdd.comments();
     articleComments.remove(comment);
     articleMap.put(articleId, articleToAdd.withComments(articleComments));
