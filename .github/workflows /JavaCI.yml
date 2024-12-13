@@ -1,9 +1,9 @@
 name: date CI
 on:
   push:
-    branches: ["Ulyalike-patch-4"]
+    branches: ["master"]
   pull_request:
-    branches: ["Ulyalike-patch-4"]
+    branches: ["master"]
 jobs:
   build:
     runs-on: ubuntu-latest
