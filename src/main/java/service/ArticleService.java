@@ -92,6 +92,7 @@ public class ArticleService {
       articleRepository.addComment(articleId, comment);
 
     } catch (CommentIdDuplicatedException e) {
+      commentRepository.delete(commentId);
       throw new CommentCreateException("Cannot create comment", e);
     } catch (ArticleNotFoundException e) {
       commentRepository.delete(commentId);
