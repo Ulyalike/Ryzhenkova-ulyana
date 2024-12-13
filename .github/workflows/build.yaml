@@ -2,7 +2,7 @@ name: Simple CI job
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "hmw5" ]
   pull_request:
     branches: [ "main" ]
 
