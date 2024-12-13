@@ -49,26 +49,14 @@ public class ArticleService {
   }
 
   public void deleteArticle(ArticleId articleId) throws ArticleDeleteException, CommentDeleteException {
-    Article deleteArticle;
     try {
-      deleteArticle = articleRepository.findById(articleId);
+      Article deleteArticle = articleRepository.findById(articleId);
+      articleRepository.delete(articleId);
+      for (Comment comment : deleteArticle.comments()) {
+          commentRepository.delete(comment.commentId());
+      }
     } catch (ArticleNotFoundException e) {
       throw new ArticleDeleteException("Cannot delete article with id=" + articleId.id(), e);
-    }
-
-    try {
-      for (Comment comment : deleteArticle.comments()) {
-        try {
-          commentRepository.delete(comment.commentId());
-        } catch (CommentNotFoundException commentNotFoundException) {
-          throw new CommentDeleteException("Failed to delete comment with id=" + comment.commentId().id(), commentNotFoundException);
-        }
-      }
-
-      articleRepository.delete(articleId);
-    } catch (Exception e) {
-
-      throw new ArticleDeleteException("Failed to delete article and its comments", e);
     }
   }
 
@@ -85,24 +73,21 @@ public class ArticleService {
   public CommentId createComment(String text, ArticleId articleId) throws CommentCreateException, ArticleFindException {
     CommentId commentId = commentRepository.generateId();
     Comment comment = new Comment(commentId, articleId, text);
-
     try {
       commentRepository.create(comment);
-
-      articleRepository.addComment(articleId, comment);
-
     } catch (CommentIdDuplicatedException e) {
-      commentRepository.delete(commentId);
       throw new CommentCreateException("Cannot create comment", e);
+    }
+    try {
+      articleRepository.addComment(articleId, comment);
     } catch (ArticleNotFoundException e) {
       commentRepository.delete(commentId);
       throw new ArticleFindException("Cannot find article by id=" + articleId.id(), e);
     }
-
     return commentId;
   }
 
-  public void deleteComment(CommentId commentId) throws CommentDeleteException {
+  public void deleteComment(CommentId commentId) throws CommentDeleteException{
     try {
       Comment deletingComment = commentRepository.findById(commentId);
       commentRepository.delete(commentId);
