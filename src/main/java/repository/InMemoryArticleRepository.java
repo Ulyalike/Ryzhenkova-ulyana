@@ -34,7 +34,7 @@ public class InMemoryArticleRepository implements ArticleRepository {
 
   @Override
   public ArticleId create(Article article) throws ArticleIdDuplicatedException {
-\    if (articleMap.get(article.id()) != null) {
+    if (articleMap.get(article.id()) != null) {
       throw new ArticleIdDuplicatedException("Article with the given id already exists:" + article.id().id());
     }
     articleMap.put(article.id(), article);
@@ -43,7 +43,7 @@ public class InMemoryArticleRepository implements ArticleRepository {
 
   @Override
   public void update(Article article) throws ArticleNotFoundException {
-\    if (articleMap.get(article.id()) == null) {
+    if (articleMap.get(article.id()) == null) {
       throw new ArticleNotFoundException("Cannot find article by id=" + article.id().id());
     }
     articleMap.put(article.id(), article);
@@ -51,7 +51,7 @@ public class InMemoryArticleRepository implements ArticleRepository {
 
   @Override
   public void addComment(ArticleId articleId, Comment comment) throws ArticleNotFoundException {
-\    Article articleToAdd = articleMap.get(articleId);
+    Article articleToAdd = articleMap.get(articleId);
     if (articleToAdd == null) {
       throw new ArticleNotFoundException("Cannot find article by id=" + articleId.id());
     }
