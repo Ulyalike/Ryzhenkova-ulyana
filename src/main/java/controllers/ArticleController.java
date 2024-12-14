@@ -22,7 +22,6 @@ public class ArticleController implements Controller {
 
   private static final Logger LOG = LoggerFactory.getLogger(ArticleController.class);
 
-
   private final Service service;
   private final ArticleService articleService;
   private final ObjectMapper objectMapper;
@@ -72,7 +71,9 @@ public class ArticleController implements Controller {
     (Request request, Response response) -> {
       response.type("application/json");
       String idString = request.params("articleId");
-      ArticleId articleId = new ArticleId(Long.parseLong(idString));
+      ArticleId articleId = parseArticleId(idString, response);
+      if (articleId == null) return null; 
+
       try {
         articleService.deleteArticle(articleId);
         LOG.debug("Article delete successfully: {}", articleId);
@@ -95,7 +96,9 @@ public class ArticleController implements Controller {
     (Request request, Response response) -> {
       response.type("application/json");
       String idString = request.params("articleId");
-      ArticleId articleId = new ArticleId(Long.parseLong(idString));
+      ArticleId articleId = parseArticleId(idString, response);
+      if (articleId == null) return null; 
+
       String body = request.body();
       ArticleUpdateRequest articleUpdateRequest = objectMapper.readValue(body, ArticleUpdateRequest.class);
       try {
@@ -120,7 +123,9 @@ public class ArticleController implements Controller {
     (Request request, Response response) -> {
       response.type("application/json");
       String idString = request.params("articleId");
-      ArticleId articleId = new ArticleId(Long.parseLong(idString));
+      ArticleId articleId = parseArticleId(idString, response);
+      if (articleId == null) return null; 
+
       try {
         Article article = articleService.findArticleById(articleId);
         LOG.debug("Article get successfully: {}", articleId);
@@ -183,7 +188,9 @@ public class ArticleController implements Controller {
     (Request request, Response response) -> {
       response.type("application/json");
       String idString = request.params("commentId");
-      CommentId commentId = new CommentId(Long.parseLong(idString));
+      CommentId commentId = parseCommentId(idString, response);
+      if (commentId == null) return null;
+
       try {
         articleService.deleteComment(commentId);
         LOG.debug("Comment delete successfully: {}", commentId);
@@ -199,5 +206,35 @@ public class ArticleController implements Controller {
         return objectMapper.writeValueAsString(new ErrorResponse(e.getMessage()));
       }
     });
+  }
+
+  private ArticleId parseArticleId(String idString, Response response) {
+    try {
+      return new ArticleId(Long.parseLong(idString));
+    } catch (NumberFormatException e) {
+      LOG.warn("Invalid ArticleId format: {}", idString, e);
+      response.status(400);
+      try {
+        return objectMapper.writeValueAsString(new ErrorResponse("Invalid ArticleId format"));
+      } catch (Exception ex) {
+        LOG.error("Error sending error response", ex);
+      }
+      return null;
+    }
+  }
+
+  private CommentId parseCommentId(String idString, Response response) {
+    try {
+      return new CommentId(Long.parseLong(idString));
+    } catch (NumberFormatException e) {
+      LOG.warn("Invalid CommentId format: {}", idString, e);
+      response.status(400);
+      try {
+        return objectMapper.writeValueAsString(new ErrorResponse("Invalid CommentId format"));
+      } catch (Exception ex) {
+        LOG.error("Error sending error response", ex);
+      }
+      return null;
+    }
   }
 }
