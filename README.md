@@ -8,12 +8,13 @@ WHERE post.post_id IS NULL
 
 
 задание 2: выбрать по возрастанию ID всех постов, у которых 2 комментария, title начинается с цифры, а длина content больше 20 (все три условия должны соблюдаться одновременно).
+```
 SELECT post.post_id FROM post
 INNER JOIN comment ON comment.post_id = post.post_id
 WHERE post.title ~ '^[0-9]' AND LENGTH(post.content) > 20
 GROUP BY post.post_id
 HAVING COUNT(comment.comment_id) = 2
-
+```
 ответ:
 22
 24
@@ -28,12 +29,13 @@ HAVING COUNT(comment.comment_id) = 2
 
 
 задание 3: выбрать по возрастанию ID всех первых 10 постов, у которых либо нет комментариев, либо он один.
+```
 SELECT post.post_id FROM post
 LEFT OUTER JOIN comment ON comment.post_id = post.post_id
 GROUP BY post.post_id
 HAVING COUNT(comment.comment_id) <= 1
 LIMIT 10
-
+```
 ответ:
 1
 3
