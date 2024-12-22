@@ -1,8 +1,9 @@
 задание 1: вывести количество пользователей, которые не создали ни одного поста.
+'''
 SELECT COUNT(*) FROM post
 RIGHT OUTER JOIN profile ON post.profile_id = profile.profile_id
 WHERE post.post_id IS NULL
-
+'''
 ответ: 5
 
 
